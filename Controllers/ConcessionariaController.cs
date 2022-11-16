@@ -11,27 +11,26 @@ namespace ProjetoEscola_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AlunoController : ControllerBase
+    public class ConcessionariaController : Controller
     {
-
-        private readonly EscolaContext _context;
-        public AlunoController(EscolaContext context)
+        private readonly ConcesissionariaContext _context;
+        public ConcessionariaController(ConcesissionariaContext context)
         {
             // construtor
             _context = context;
         }
         [HttpGet]
-        public ActionResult<List<Aluno>> GetAll()
+        public ActionResult<List<Concessionaria>> GetAll()
         {
-            return _context.Aluno.ToList();
+            return _context.Concessionaria.ToList();
         }
 
-        [HttpGet("{AlunoId}")]
-        public ActionResult<List<Aluno>> Get(int AlunoId)
+        [HttpGet("{ConcessionariaId}")]
+        public ActionResult<List<Concessionaria>> Get(int ConcessionariaId)
         {
             try
             {
-                var result = _context.Aluno.Find(AlunoId);
+                var result = _context.Concessionaria.Find(ConcessionariaId);
                 if (result == null)
                 {
                     return NotFound();
@@ -43,17 +42,16 @@ namespace ProjetoEscola_API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Falha no acesso ao banco de dados.");
             }
         }
-
         [HttpPost]
-        public async Task<ActionResult> post(Aluno model)
+        public async Task<ActionResult> post(Concessionaria model)
         {
             try
             {
-                _context.Aluno.Add(model);
+                _context.Concessionaria.Add(model);
                 if (await _context.SaveChangesAsync() == 1)
                 {
                     //return Ok();
-                    return Created($"/api/aluno/{model.ra}", model);
+                    return Created($"/api/concessionaria/{model.codLoja}", model);
                 }
             }
             catch
@@ -64,22 +62,25 @@ namespace ProjetoEscola_API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{AlunoId}")]
-        public async Task<IActionResult> put(int AlunoId, Aluno dadosAlunoAlt)
+
+        [HttpPut("{ConcessionariaId}")]
+        public async Task<IActionResult> put(int ConcessionariaId, Concessionaria ConcessionariaAlt)
         {
             try
             {
                 //verifica se existe aluno a ser alterado
-                var result = await _context.Aluno.FindAsync(AlunoId);
-                if (AlunoId != result.id)
+                var result = await _context.Concessionaria.FindAsync(ConcessionariaId);
+                if (ConcessionariaId != result.id)
                 {
                     return BadRequest();
                 }
-                result.ra = dadosAlunoAlt.ra;
-                result.nome = dadosAlunoAlt.nome;
-                result.codCurso = dadosAlunoAlt.codCurso;
+                result.codLoja = ConcessionariaAlt.codLoja;
+                result.nomeLoja = ConcessionariaAlt.nomeLoja;
+                result.cep = ConcessionariaAlt.cep;
+                result.endereco = ConcessionariaAlt.endereco;
+                result.estado = ConcessionariaAlt.estado;
                 await _context.SaveChangesAsync();
-                return Created($"/api/aluno/{dadosAlunoAlt.ra}", dadosAlunoAlt);
+                return Created($"/api/concessionaria/{ConcessionariaAlt.codLoja}", ConcessionariaAlt);
             }
             catch
             {
@@ -88,25 +89,25 @@ namespace ProjetoEscola_API.Controllers
         }
 
 
-        [HttpDelete("{AlunoId}")]
-        public async Task<ActionResult> delete(int AlunoId)
+        [HttpDelete("{ConcessionariaId}")]
+        public async Task<ActionResult> delete(int ConcessionariaId)
         {
             try
             {
-                //verifica se existe aluno a ser excluído
-                var aluno = await _context.Aluno.FindAsync(AlunoId);
-                if (aluno == null)
+                //verifica se existe veiculo a ser excluído
+                var concessionaria = await _context.Concessionaria.FindAsync(ConcessionariaId);
+                if (concessionaria == null)
                 {
                     //método do EF
                     return NotFound();
                 }
-                _context.Remove(aluno);
+                _context.Remove(concessionaria);
                 await _context.SaveChangesAsync();
                 return NoContent();
             }
             catch
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Falha no acesso ao banco de dados.");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Falhano acesso ao banco de dados.");
             }
         }
     }

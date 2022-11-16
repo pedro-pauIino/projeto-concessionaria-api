@@ -14,11 +14,11 @@ namespace ProjetoEscola_API.Controllers
     public class HomeController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly EscolaContext? _context;
+        private readonly ConcesissionariaContext? _context;
         public HomeController(
 
         IConfiguration configuration,
-        EscolaContext context)
+        ConcesissionariaContext context)
         {
             _configuration = configuration;
             _context = context;
@@ -28,7 +28,7 @@ namespace ProjetoEscola_API.Controllers
         [AllowAnonymous]
         public ActionResult<dynamic> Login([FromBody] User usuario)
         {
-            //verifica se existe aluno a ser excluído
+            
             var user = _context.Usuario.Where(u => u.username == usuario.username && u.senha == usuario.senha)
 
             .FirstOrDefault();

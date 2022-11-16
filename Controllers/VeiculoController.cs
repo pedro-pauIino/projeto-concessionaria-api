@@ -11,27 +11,26 @@ namespace ProjetoEscola_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CursoController : ControllerBase
+    public class VeiculoController : Controller
     {
-
-        private readonly EscolaContext _context;
-        public CursoController(EscolaContext context)
+        private readonly ConcesissionariaContext _context;
+        public VeiculoController(ConcesissionariaContext context)
         {
             // construtor
             _context = context;
         }
         [HttpGet]
-        public ActionResult<List<Curso>> GetAll()
+        public ActionResult<List<Veiculo>> GetAll()
         {
-            return _context.Curso.ToList();
+            return _context.Veiculo.ToList();
         }
 
-        [HttpGet("{CursoId}")]
-        public ActionResult<List<Curso>> Get(int CursoId)
+        [HttpGet("{VeiculoId}")]
+        public ActionResult<List<Veiculo>> Get(int VeiculoId)
         {
             try
             {
-                var result = _context.Curso.Find(CursoId);
+                var result = _context.Veiculo.Find(VeiculoId);
                 if (result == null)
                 {
                     return NotFound();
@@ -43,17 +42,16 @@ namespace ProjetoEscola_API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Falha no acesso ao banco de dados.");
             }
         }
-
         [HttpPost]
-        public async Task<ActionResult> post(Curso model)
+        public async Task<ActionResult> post(Veiculo model)
         {
             try
             {
-                _context.Curso.Add(model);
+                _context.Veiculo.Add(model);
                 if (await _context.SaveChangesAsync() == 1)
                 {
                     //return Ok();
-                    return Created($"/api/cursos/{model.codCurso}", model);
+                    return Created($"/api/veiculo/{model.chassi}", model);
                 }
             }
             catch
@@ -64,22 +62,26 @@ namespace ProjetoEscola_API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{CursoId}")]
-        public async Task<IActionResult> put(int CursoId, Curso dadosCursoAlt)
+
+        [HttpPut("{VeiculoId}")]
+        public async Task<IActionResult> put(int VeiculoId, Veiculo dadosVeiculoAlt)
         {
             try
             {
                 //verifica se existe aluno a ser alterado
-                var result = await _context.Curso.FindAsync(CursoId);
-                if (CursoId != result.Id)
+                var result = await _context.Veiculo.FindAsync(VeiculoId);
+                if (VeiculoId != result.id)
                 {
                     return BadRequest();
                 }
-                result.codCurso = dadosCursoAlt.codCurso;
-                result.nomeCurso = dadosCursoAlt.nomeCurso;
-                result.periodo = dadosCursoAlt.periodo;                
+                result.chassi = dadosVeiculoAlt.chassi;
+                result.marca = dadosVeiculoAlt.marca;
+                result.modelo = dadosVeiculoAlt.modelo;
+                result.ano = dadosVeiculoAlt.ano;
+                result.cor = dadosVeiculoAlt.cor;
+                result.preco = dadosVeiculoAlt.preco;
                 await _context.SaveChangesAsync();
-                return Created($"/api/cursos/{dadosCursoAlt.codCurso}", dadosCursoAlt);
+                return Created($"/api/veiculo/{dadosVeiculoAlt.chassi}", dadosVeiculoAlt);
             }
             catch
             {
@@ -88,27 +90,26 @@ namespace ProjetoEscola_API.Controllers
         }
 
 
-        [HttpDelete("{CursoId}")]
-        public async Task<ActionResult> delete(int CursoId)
+        [HttpDelete("{VeiculoId}")]
+        public async Task<ActionResult> delete(int VeiculoId)
         {
             try
             {
-                //verifica se existe aluno a ser excluído
-                var curso = await _context.Curso.FindAsync(CursoId);
-                if (curso == null)
+                //verifica se existe veiculo a ser excluído
+                var veiculo = await _context.Veiculo.FindAsync(VeiculoId);
+                if (veiculo == null)
                 {
                     //método do EF
                     return NotFound();
                 }
-                _context.Remove(curso);
+                _context.Remove(veiculo);
                 await _context.SaveChangesAsync();
                 return NoContent();
             }
             catch
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Falha no acesso ao banco de dados.");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Falhano acesso ao banco de dados.");
             }
         }
     }
 }
-  
