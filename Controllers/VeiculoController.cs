@@ -51,7 +51,7 @@ namespace ProjetoEscola_API.Controllers
                 if (await _context.SaveChangesAsync() == 1)
                 {
                     //return Ok();
-                    return Created($"/api/veiculo/{model.chassi}", model);
+                    return Created($"/api/veiculo/{model.placa}", model);
                 }
             }
             catch
@@ -74,14 +74,16 @@ namespace ProjetoEscola_API.Controllers
                 {
                     return BadRequest();
                 }
-                result.chassi = dadosVeiculoAlt.chassi;
+                result.placa = dadosVeiculoAlt.placa;
                 result.marca = dadosVeiculoAlt.marca;
                 result.modelo = dadosVeiculoAlt.modelo;
                 result.ano = dadosVeiculoAlt.ano;
                 result.cor = dadosVeiculoAlt.cor;
+                result.km = dadosVeiculoAlt.km;
                 result.preco = dadosVeiculoAlt.preco;
+                result.codLoja = dadosVeiculoAlt.codLoja;
                 await _context.SaveChangesAsync();
-                return Created($"/api/veiculo/{dadosVeiculoAlt.chassi}", dadosVeiculoAlt);
+                return Created($"/api/veiculo/{dadosVeiculoAlt.placa}", dadosVeiculoAlt);
             }
             catch
             {
